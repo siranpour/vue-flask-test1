@@ -29,9 +29,27 @@
          type="text"
          v-model="dataentry.answer"
          placeholder="Here is answer"
-
        ></b-form-textarea>
      </b-form-group>
+
+     <b-form-group id="input-group-3" label="Timestamp" label-for="input-3">
+       <b-form-textarea
+         id="input-3"
+         type="text"
+         v-model="dataentry.timestamp"
+         placeholder="Here is the timestamp"
+       ></b-form-textarea>
+     </b-form-group>
+
+     <b-form-group id="input-group-3" label="Video Title" label-for="input-3">
+       <b-form-textarea
+         id="input-3"
+         type="text"
+         v-model="dataentry.audio_title"
+         placeholder="Here is the video title"
+       ></b-form-textarea>
+     </b-form-group>
+
   </b-form>
 
   </div>
@@ -47,6 +65,8 @@ export default{
        dataentry:{
         question:"",
         answer:"",
+        timestamp:"",
+        audio_title:"",
       },
     };
   },
@@ -56,11 +76,15 @@ export default{
       axios.post(path, {
         question:this.dataentry.question,
         answer:this.dataentry.answer,
+        timestamp:this.dataentry.timestamp,
+        audio_title:this.dataentry.audio_title,
         }
       )
       .then((response) => {
          console.log(response)
          this.dataentry.answer = response.data.result;
+         this.dataentry.timestamp = response.data.timestamp;
+         this.dataentry.audio_title = response.data.audio_title;
       })
       .catch(err =>{
         console.log(err);
