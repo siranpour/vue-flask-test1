@@ -1,7 +1,6 @@
 <template>
     <footer class="footer has-cards">
             <hr>
-        </div>
     </footer>
 </template>
 
