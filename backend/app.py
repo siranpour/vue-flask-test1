@@ -25,8 +25,9 @@ def submitData():
         - format handler_store_op response data as response_object to return to frontend
         """
 
-        response_object['result'] = 'yyyeeeaahhh!'
-        response_object['timestamp'] = 'timestampvargoeshere'
+        response_object['result'] = 'answer_goes_here'
+        response_object['timestamp'] = 'time_stamp_var_goes_here'
+        response_object['audio_title'] = 'audio_title_goes_here'
         print(response_object)
         return jsonify(response_object)
 
