@@ -82,9 +82,9 @@ export default{
       )
       .then((response) => {
          console.log(response)
-         this.dataentry.answer = response.data.result;
-         this.dataentry.timestamp = response.data.timestamp;
-         this.dataentry.audio_title = response.data.audio_title;
+         this.dataentry.answer = response.data.response_candidates[0].result;
+         this.dataentry.timestamp = response.data.response_candidates[0].timestamp_hms;
+         this.dataentry.audio_title = response.data.response_candidates[0].audio_title;
       })
       .catch(err =>{
         console.log(err);

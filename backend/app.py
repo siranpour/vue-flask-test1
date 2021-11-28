@@ -8,6 +8,24 @@ Cors = CORS(app)
 CORS(app, resources={r'/*': {'origins': '*'}}, CORS_SUPPORTS_CREDENTIALS=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+import sqlalchemy as db
+
+from aq.core.extraction import DataArchive
+from aq.core.retreival import ReQATools
+
+# testing
+host = "database-1.cluster-cae7cqi3hwtw.us-east-2.rds.amazonaws.com"
+username = "postgresql"
+password = "w210w210"
+dbname = "test"
+#db_engine = db.create_engine(f"postgresql+psycopg2://{host}:{username}@{password}")
+#connection = db_engine.connect()
+#
+#
+
+archive = DataArchive()
+archive.load("./w207.zip.bz2")
+reqa = ReQATools(archive)
 
 @app.route("/dataentry", methods=["POST"])
 def submitData():
@@ -16,7 +34,10 @@ def submitData():
         post_data = request.get_json()
 
         user_query = post_data.get('question')
-        print(user_query)
+        query = user_query if user_query.endswith('?') else user_query + '?'
+        print(query)
+
+        candidate_answers = reqa.do_reqa(query, 1)
 
         """
         TODO:
@@ -25,9 +46,24 @@ def submitData():
         - format handler_store_op response data as response_object to return to frontend
         """
 
-        response_object['result'] = 'answer_goes_here'
-        response_object['timestamp'] = 'time_stamp_var_goes_here'
-        response_object['audio_title'] = 'audio_title_goes_here'
+        response_object = {
+            "query": query,
+            "response_candidates": []
+        }
+        for idx, candidate in enumerate(candidate_answers):
+            hour = int(candidate['timestamp'] // 3600)
+            min = int(candidate['timestamp'] // 60)
+            sec = int(candidate['timestamp'] % 60)
+
+            response_candidate = {}
+            response_candidate['context'] = candidate['context']
+            response_candidate['result'] = candidate["answer_pred"]
+            response_candidate['timestamp_hms'] = f"{hour}:{min}:{sec}"
+            response_candidate['timestamp'] = candidate["timestamp"]
+            response_candidate['audio_title'] = candidate["source_id"]
+
+            response_object["response_candidates"].append(response_candidate)
+
         print(response_object)
         return jsonify(response_object)
 
